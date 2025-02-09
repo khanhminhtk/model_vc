@@ -1,6 +1,9 @@
 from torchsummary import summary
 import torch.nn as nn
 import torch
+import io
+from contextlib import redirect_stdout
+
 
 class Cnn_block(nn.Module):
     def __init__(self, out_channels, in_channels = 3, padding = 1):
@@ -85,3 +88,11 @@ class VGG19(nn.Module):
 if __name__ == '__main__':
     model = VGG19(num_classes=10)
     print(summary(model, (3, 224, 224), device='cpu'))
+    with open("./VGG19_architecture.txt", "w") as file:
+        file.write(str(model))
+    with open("./VGG19_summary.txt", "w") as file:
+        buffer = io.StringIO()
+        with redirect_stdout(buffer):
+            summary(model, (3, 224, 224), device='cpu')
+        file.write(buffer.getvalue())
+
